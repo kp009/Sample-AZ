@@ -24,33 +24,33 @@ jobs:
         with:
           python-version: '3.13'
 
-      - name: Create and start virtual environment
+      - name: Create and activate virtual environment
         run: |
           python -m venv venv
           source venv/bin/activate
-      
-      - name: Install dependencies
-        run: |
-          cd azdjango
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-       
-      - name: Collect static files
-        run: |
-          cd azdjango
-          python manage.py collectstatic --noinput
-      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
-      - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+      - name: Run collectstatic
+        run: |
+          source venv/bin/activate
+          python azdjango/manage.py collectstatic --noinput
+
+      # Optional: Add Django test step
+      # - name: Run tests
+      #   run: |
+      #     source venv/bin/activate
+      #     python azdjango/manage.py test
+
+      - name: Zip artifact for deployment (excluding venv)
+        run: |
+          zip -r release.zip . -x "venv/*" ".git/*" ".github/*" "__pycache__/*"
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
         with:
           name: python-app
-          path: |
-            release.zip
-            !venv/
+          path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
