@@ -4,5 +4,5 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 def home(request):
-    return HttpResponse("Hello from the Core App!")
-    # return render(request, "index.html")
+    #return HttpResponse("Hello from the Core App!")
+    return render(request, "index.html")
